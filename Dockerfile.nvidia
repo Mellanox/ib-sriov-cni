@@ -17,11 +17,10 @@ RUN make clean && \
 
 FROM ${BASE_IMAGE_GO_DISTROLESS_DEV:-nvcr.io/nvidia/distroless/go:v3.2.1-dev}
 
-USER 0:0
-SHELL ["/busybox/sh", "-c"]
-RUN ln -s /busybox/sh /bin/sh
-
-COPY --from=builder /usr/src/ib-sriov-cni/build/ib-sriov /usr/bin/
+COPY --from=builder \
+     /usr/src/ib-sriov-cni/build/ib-sriov \
+     /usr/src/ib-sriov-cni/build/thin_entrypoint \
+     /usr/bin/
 # Provide the source code and license in the container
 COPY --from=builder /usr/src/ib-sriov-cni /
 WORKDIR /
@@ -29,6 +28,4 @@ WORKDIR /
 
 LABEL io.k8s.display-name="InfiniBand SR-IOV CNI"
 
-COPY ./images/entrypoint.sh /
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/thin_entrypoint"]
