@@ -25,6 +25,7 @@ COPY --from=builder \
 COPY --from=builder /usr/src/ib-sriov-cni /
 WORKDIR /
 
+USER 0:0
 
 LABEL io.k8s.display-name="InfiniBand SR-IOV CNI"
 
