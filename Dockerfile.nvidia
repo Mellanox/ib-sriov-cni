@@ -1,16 +1,22 @@
 ARG BASE_IMAGE_GO_DISTROLESS_DEV
 
-FROM golang:1.25-alpine as builder
+FROM golang:1.26 AS builder
 
 ARG GOPROXY
 ENV GOPROXY=$GOPROXY
 
 COPY . /usr/src/ib-sriov-cni
 
-ENV HTTP_PROXY $http_proxy
-ENV HTTPS_PROXY $https_proxy
+ARG TARGETOS
+ARG TARGETARCH
+ARG http_proxy
+ARG https_proxy
 
-RUN apk add --no-cache --virtual build-dependencies build-base=~0.5
+ENV HTTP_PROXY=$http_proxy \
+    HTTPS_PROXY=$https_proxy \
+    GOOS=$TARGETOS \
+    GOARCH=$TARGETARCH
+
 WORKDIR /usr/src/ib-sriov-cni
 RUN make clean && \
     make build
